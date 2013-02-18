@@ -33,6 +33,28 @@ def _wait_for_proto(proto):
     return proto.post_bootstrap
 
 
+def create_stem_event(evt, content):
+    """
+    This creates a Stem ControlMessage and then "convert()"s it to
+    the right subclass. If stem can't be imported or anything else
+    goes wrong an exception results.
+    """
+
+    import stem.response
+    import time                         # FIXME: IReactorTime please!
+
+    msg = stem.response.ControlMessage.from_str('650 ' + evt + ' ' + content + '\r\n')
+
+    kwargs = {}
+    ## arrived_at is *required* but not-really documented for Events
+    ## FIXME: are there other required keywords? convert() doesn't say, probably
+    ## need to look at all Event subclasses in the _parse_message() method
+    kwargs['arrived_at'] = time.time()         # FIXME, now we need an IReactorTime here...
+
+    stem.response.convert('EVENT', msg, **kwargs)
+    return msg
+
+
 def build_tor_connection(connection, build_state=True, wait_for_proto=True,
                          password_function=lambda: None):
     """
