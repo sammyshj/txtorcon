@@ -7,7 +7,7 @@ from twisted.internet.interfaces import IStreamClientEndpoint, IReactorCore
 
 import os
 
-from txtorcon import TorControlProtocol, TorProtocolError, TorState, Stream, Circuit, build_tor_connection
+from txtorcon import TorControlProtocol, TorProtocolError, TorState, Stream, Circuit, build_tor_connection, create_stem_event
 from txtorcon.interface import ITorControlProtocol, IStreamAttacher, ICircuitListener, IStreamListener, StreamListenerMixin, CircuitListenerMixin
 
 
@@ -169,6 +169,23 @@ class InternalMethodsTests(unittest.TestCase):
     def test_state_diagram(self):
         TorState(FakeControlProtocol(), bootstrap=False, write_state_diagram=True)
         self.assertTrue(os.path.exists('routerfsm.dot'))
+
+
+class StemIntegrationTests(unittest.TestCase):
+    """
+    Note that Stem is an optional dependency, so import stem inside
+    each test. (Unless there is a moar-better way?)
+    """
+
+    def setUp(self):
+        self.protocol = FakeControlProtocol()
+        self.state = TorState(self.protocol, bootstrap=False)
+
+    def test_events(self):
+        import stem.response
+        event = create_stem_event('INFO', 'some_method(): some logging information')
+        self.assertTrue(isinstance(event, stem.response.ControlMessage))
+        self.assertEqual(event.message, 'some_method(): some logging information')
 
 
 class BootstrapTests(unittest.TestCase):
