@@ -217,8 +217,7 @@ class BootstrapTests(unittest.TestCase):
                                  '',     # stream-status
                                  '',     # address-mappings/all
                                  '',     # entry-guards
-                                 '1234'  # PID
-                                 ])
+                                 '1234'])  # PID
 
         d = build_tor_connection(p, build_state=True)
         d.addCallback(self.confirm_state).addErrback(self.fail)
@@ -231,8 +230,7 @@ class BootstrapTests(unittest.TestCase):
                                  '',    # circuit-status
                                  '',    # stream-status
                                  '',    # address-mappings/all
-                                 ''     # entry-guards
-                                 ])
+                                 ''])   # entry-guards
 
         d = build_tor_connection(p, build_state=True)
         d.addCallback(self.confirm_state)
@@ -618,11 +616,10 @@ p reject 1-65535""")
         r = self.state.routers.values()
         self.assertEqual(len(r), 2)
         self.assertEqual(r[0], r[1])
-        
+
         expected = [('new', {'id':456}),
                     ('launched', {}),
-                    ('extend', {'id':123})
-                    ]
+                    ('extend', {'id':123})]
         listen = CircuitListener(expected)
         ## first add a Circuit before we listen
         self.protocol.dataReceived("650 CIRC 123 LAUNCHED PURPOSE=GENERAL\r\n")

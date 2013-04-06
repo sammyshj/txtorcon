@@ -35,5 +35,4 @@ __all__ = ["Router",
            "ITorControlProtocol",
            "IStreamListener", "IStreamAttacher", "StreamListenerMixin",
            "ICircuitContainer", "ICircuitListener", "CircuitListenerMixin",
-           "IRouterContainer", "IAddrListener"
-           ]
+           "IRouterContainer", "IAddrListener"]

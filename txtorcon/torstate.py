@@ -213,7 +213,7 @@ class TorState(object):
         from stem.descriptor.microdescriptor import Microdescriptor
 
         class StemMicrodescriptorStream(object):
-            def __init__(self, emit_router = lambda x: None):
+            def __init__(self, emit_router=lambda x: None):
                 self.buffer = []
                 self.emit_router = emit_router
 
@@ -239,14 +239,10 @@ class TorState(object):
             def _maybe_emit_router(self):
                 if len(self.buffer) >= 2:
                     ##print "MAYBE", self.buffer
-                    try:
-                        stemrouter = stem.descriptor.router_status_entry.RouterStatusEntryV3(('\n'.join(self.buffer)))
-                        ##print "EMIT!", stemrouter
-                        self.emit_router(stemrouter)
-                        self.buffer = []
-                    except Exception, e:
-                        print "ERROROORRO\n\nERROR:", e
-                        raise
+                    stemrouter = stem.descriptor.router_status_entry.RouterStatusEntryV3(('\n'.join(self.buffer)))
+                    ##print "EMIT!", stemrouter
+                    self.emit_router(stemrouter)
+                    self.buffer = []
 
         self._network_status_parser = StemMicrodescriptorStream(self._router_via_stem)
 
@@ -265,32 +261,30 @@ class TorState(object):
             print dir(md)
             print "===================="
 
-        newly_created = False    
+        newly_created = False
         try:
             self._router = self.routers['$' + md.fingerprint]
+
         except KeyError:
             self._router = Router(self.protocol)
             newly_created = True
 
         self._router.from_consensus = True
         ## FIXME the hashes aren't coming back from stem
-        try:
-            self._router.update(md.nickname, #args[1],         # nickname
-                                '$' + md.fingerprint, #args[2],         # idhash
-                                md.digest, #args[3],         # orhash
-                                md.published, #datetime.datetime.strptime(args[4] + args[5], '%Y-%m-%f%H:%M:%S'),
-                                md.address,         # ip address
-                                md.or_port,         # ORPort
-                                md.dir_port)         # DirPort
-            self._router.id_hex = '$' + md.fingerprint
-            if md.bandwidth:
-                self._router.bandwidth = md.bandwidth
-            if md.exit_policy:
-                self._router.policy = str(md.exit_policy).split()
-            self._router.flags = md.flags
-        except Exception, e:
-            print "FOOFOOOFOO", e
-            raise
+        ## FIXME what did I mean by that? looks like we have idhash and orhas below -- double check
+        self._router.update(md.nickname,  # nickname
+                            '$' + md.fingerprint,  # idhash
+                            md.digest,  # orhash
+                            md.published,  # datetime object
+                            md.address,
+                            md.or_port,
+                            md.dir_port)
+        self._router.id_hex = '$' + md.fingerprint
+        if md.bandwidth:
+            self._router.bandwidth = md.bandwidth
+        if md.exit_policy:
+            self._router.policy = str(md.exit_policy).split()
+        self._router.flags = md.flags
 
         if self._router.name in self.routers_by_name:
             self.routers_by_name[self._router.name].append(self._router)
@@ -574,6 +568,7 @@ class TorState(object):
 
             else:
                 if isinstance(circ, defer.Deferred):
+
                     class IssueStreamAttach:
                         def __init__(self, state, streamid):
                             self.stream_id = streamid
