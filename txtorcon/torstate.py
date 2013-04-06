@@ -21,7 +21,7 @@ from txtorcon.torcontrolprotocol import TorProtocolError
 
 from txtorcon.interface import ITorControlProtocol, IRouterContainer, ICircuitListener
 from txtorcon.interface import ICircuitContainer, IStreamListener, IStreamAttacher
-from spaghetti import FSM, State, Transition
+#from spaghetti import FSM, State, Transition
 
 
 def _build_state(proto):
@@ -210,7 +210,6 @@ class TorState(object):
         import stem.util.tor_tools      # HUH? why do i have to import these?!
         import stem.descriptor
         import stem.descriptor.router_status_entry
-        from stem.descriptor.microdescriptor import Microdescriptor
 
         class StemMicrodescriptorStream(object):
             def __init__(self, emit_router=lambda x: None):

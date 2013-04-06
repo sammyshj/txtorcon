@@ -5,8 +5,6 @@ from twisted.test import proto_helpers
 from twisted.internet import task, defer
 from twisted.internet.interfaces import IStreamClientEndpoint, IReactorCore
 
-import os
-
 from txtorcon import TorControlProtocol, TorProtocolError, TorState, Stream, Circuit, build_tor_connection, create_stem_event
 from txtorcon.interface import ITorControlProtocol, IStreamAttacher, ICircuitListener, IStreamListener, StreamListenerMixin, CircuitListenerMixin
 
@@ -681,9 +679,8 @@ p accept 43,53,79-81,110,143,194,220,443,953,989-990,993,995,1194,1293,1723,1863
 .''')
             self.fail()
 
-        except ValueError, e:
+        except ValueError:
             pass
-#            self.assertTrue('"s "' in str(e))
 
     def test_routers_no_policy(self):
         """

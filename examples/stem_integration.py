@@ -8,16 +8,16 @@ import txtorcon
 
 
 try:
-    import stem
+    import stem.response.events
 except ImportError:
     print "This example requires Stem to be installed (or at least importable)"
+    print "Did you set PYTHONPATH?"
     sys.exit(1)
 
 
 def received_stem_event(event_type, data):
     e = txtorcon.create_stem_event(event_type, data)
     print "Stem event:", type(e)
-    import stem.response.events
     if issubclass(type(e), stem.response.events.LogEvent):
         print e.message
 
