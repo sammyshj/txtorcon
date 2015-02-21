@@ -1129,11 +1129,17 @@ class TorConfig(object):
             return defer.succeed(self)
 
         args = []
+        directories = []
         for (key, value) in self.unsaved.items():
             if key == 'HiddenServices':
                 self.config['HiddenServices'] = value
                 for hs in value:
                     for (k, v) in hs.config_attributes():
+                        if k == 'HiddenServiceDir':
+                            if v in directories:
+                                raise RuntimeError("Trying to add hidden service with same HiddenServiceDir")
+                            else:
+                                directories.append(v)
                         args.append(k)
                         args.append(v)
                 continue
